@@ -265,3 +265,38 @@ iframe {
         border-bottom: none;
     }
 }
+
+svg {
+  width: 100%;
+  font-size: .75em;
+}
+svg .axis-caption {
+  font-style: italic;
+  fill: #777;
+}
+svg a {
+  fill: #be1622;
+}
+svg .label {
+  font-weight: bold;
+}
+svg text {
+  text-anchor: middle;
+}
+svg text.accent {
+  font-weight: bold;
+  fill: #be1622;
+}
+svg .left {
+  text-anchor: start;
+}
+svg .right {
+  text-anchor: end;
+}
+svg line {
+  stroke: black;
+}
+svg line.accent {
+  stroke: #be1622;
+  stroke-width: 2px;
+}
