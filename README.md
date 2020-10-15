@@ -1,4 +1,5 @@
 # Slides for SSWS 2020 on AMF
+[![Build Status](https://github.com/rubensworks/slides-2020-iswc-ssws-amf/workflows/Build%20and%20Deploy/badge.svg)](https://rubensworks.github.io/slides-2020-iswc-ssws-amf/)
 
 These slides are created using the [shower](https://github.com/shower/shower) framework.
 
