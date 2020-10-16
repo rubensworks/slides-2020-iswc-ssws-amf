@@ -86,12 +86,15 @@
         <h2 property="schema:name">TPF leads to longer execution times</h2>
 		
 		<ul>
-			<li>Caused by large number of HTTP requests</li>
 			<li>
-				1/3 queries: 50% of HTTP requests are <em>membership requests</em>
-				<br />
+				<h3>Caused by large number of HTTP requests</h3>
+				<span class="indent">HTTP delays form the main bottleneck in TPF query execution</span>
+			</li>
+			<li>
+				<h3>1/3 queries: 50% of HTTP requests are <em>membership requests</em></h3>
 				<span class="indent">
-					= triple pattern query w/o variables &rarr; check if triple exists in dataset
+					Membership request = triple pattern query w/o variables
+					</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; check if triple exists in dataset
 				</span>
 				<br />
 				<span class="indent">
@@ -99,19 +102,93 @@
 				</span>
 			</li>
 		</ul>
+    </section>
+	
+    <section id="problem-requests-example" class="slide" inlist="" rel="schema:hasPart" resource="#problem-requests-example">
+        <h2 property="schema:name">Example of membership requests</h2>
 		
-		TODO: show example
+		<span class="next">
+			<h3>Input query</h3>
+			<pre>SELECT ?p WHERE {
+  <b>?p dbo:birthPlace dbr:York.</b> # Evaluate first
+  ?p a dbo:Artist.
+}</pre>
+		</span>
+		
+		<span class="next">
+			<h3>Bind results to remaining query &rarr; membership queries</h3>
+			<pre>dbp:Albert_Joseph_Moore    a dbo:Artist
+dbp:Charles_Francis_Hansom a dbo:Artist
+dbp:Dustin_Gee             a dbo:Artist
+... (207 in total on DBpedia)</pre>
+		</span>
+		<h3 class="next">&rarr; 207 HTTP membership requests</h3>
     </section>
 	
     <section id="vandersande-solution" class="slide" inlist="" rel="schema:hasPart" resource="#vandersande-solution">
         <h2 property="schema:name">Approximate membership filters (AMFs) to reduce HTTP requests</h2>
 		
-		TODO: but doesn't make things faster
+		<ul>
+			<li>
+				<h3>Bloom filters and Golomb-coded sets</h3>
+				<span class="indent">Probabilistic datastructures to efficiently determine membership of a set</span>
+				<br />
+				<span class="indent">Chance of false-positives</span>
+			</li>
+			<li>
+				<h3>AMFs are included in TPF responses for triple patterns</h3>
+				<span class="indent"><code>?p a dbo:Artist</code> includes a Bloom filter containing all bindings for <code>?p</code></span>
+				<br />
+				<span class="indent">&rarr; Avoid HTTP requests for <strong>true negatives</strong></span>
+				<br />
+				<span class="indent">&rarr; Still need HTTP requests for <strong>true/false positives</strong></span>
+			</li>
+		</ul>
+    </section>
+	
+    <section id="problem-requests-example2" class="slide" inlist="" rel="schema:hasPart" resource="#problem-requests-example2">
+        <h2 property="schema:name">Example with AMF</h2>
+		
+		<span class="next">
+			<h3>Input query</h3>
+			<pre>SELECT ?p WHERE {
+  <b>?p dbo:birthPlace dbr:York.</b> # Evaluate first
+  ?p a dbo:Artist. # Download AMF
+}</pre>
+		</span>
+		
+		<span class="next">
+			<h3>Run results through AMF of second pattern</h3>
+			<pre>AMF(dbp:Albert_Joseph_Moore)
+AMF(dbp:Charles_Francis_Hansom)
+AMF(dbp:Dustin_Gee)
+...</pre>
+		</span>
+		<h3 class="next"><strike>&rarr; 207 HTTP membership requests</strike></h3>
+    </section>
+	
+    <section id="vandersande-findings" class="slide" inlist="" rel="schema:hasPart" resource="#vandersande-findings">
+        <h2 property="schema:name">AMFs reduce number of HTTP requests</h2>
+		
+		<ul>
+			<li>
+				<h3><strong>+</strong> On average, 33% fewer HTTP requests</h3>
+				<span class="indent">Pre-filtering of true negatives</span>
+			</li>
+			<li>
+				<h3><strong>-</strong> Total execution time increased for most queries</h3>
+				<span class="indent">Server delays when generating AMFs</span>
+			</li>
+		</ul>
     </section>
 	
     <section id="goal" class="slide" inlist="" rel="schema:hasPart" resource="#goal">
 		<center>
-        	<h2 property="schema:name" class="big" style="margin-top: 3em">How to reduce query execution time with AMFs over TPF?</h2>
+        	<h2 property="schema:name" class="big" style="margin-top: 3em">
+				<em>Goal of this work:</em>
+				<br/>
+				How to reduce query execution time with AMFs over TPF?
+			</h2>
 		</center>
     </section>
 	
@@ -131,12 +208,75 @@
       </ul>
     </section>
 	
+    <section id="optimizations" class="slide" inlist="" rel="schema:hasPart" resource="#optimizations">
+        <h2 property="schema:name">Investigated directions for optimization</h2>
+		<p style="font-style: italic">Subselection, more in the article</p>
+		<ul>
+			<li>
+				<h3>1. Use AMFs higher up in the query plan</h3>
+				<span class="indent">Also use for partially bound triple patterns</span>
+			</li>
+			<li>
+				<h3>2. Caching of AMFs</h3>
+				<span class="indent">To avoid regenerating large AMFs</span>
+			</li>
+			<li>
+				<h3>4. Determine the optimal false-positive probability</h3>
+				<span class="indent">Probability impacts number of HTTP requests and AMF sizes</span>
+			</li>
+		</ul>
+    </section>
+	
     <section id="index-experiments" class="slide index" inlist="" rel="schema:hasPart" resource="#index-experiments">
       <ul>
         <li><a href="#index-optimizations">Optimizations</a></li>
         <li class="current"><a href="#index-experiments">Experiments</a></li>
         <li><a href="#index-findings">Findings</a></li>
       </ul>
+    </section>
+	
+    <section id="client-algo" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo">
+        <h2 property="schema:name">1. Using AMFs higher up in query plan reduces time for most queries</h2>
+		<img src="img/client_algos/plot_no_c.svg" height="200px">
+		<img src="img/client_algos/plot_c.svg" height="200px">
+		<p style="font-size: 0.5em; float: right">
+			None: Default client-side TPF algorithm<br />
+			Triple: Existing triple-level AMF algoritm<br />
+			BGPSimple, BGPCombined, TripleBGP: New higher-level algorithms
+		</p>
+		<strong>Speedup for 15 / 20 queries</strong>
+		<p style="font-style: italic"><strong>WatDiv</strong> (dataset scale: 100; query count: 5)</p>
+    </section>
+	
+    <section id="client-algo-dief" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo-dief">
+        <h2 property="schema:name">1. Using AMFs higher up in query plan changes result arrival times</h2>
+		<center><img src="img/client_algos/query_times_F3.svg" height="200px"></center>
+		<strong>Delayed time to first result</strong>
+		<br />
+		<span class="indent">AMFs used for higher-level algorithms are larger &rarr; more HTTP delay</span>
+		<br />
+		<strong>Faster result rate</strong>
+    </section>
+	
+    <section id="caching" class="slide" inlist="" rel="schema:hasPart" resource="#caching">
+        <h2 property="schema:name">2. Any form of caching significantly reduces query execution time</h2>
+		<img src="img/caching/plot_no_c.svg" height="180px" style="margin-top: 4em">
+		<img src="img/caching/plot_c.svg" height="180px">
+		<p style="font-size: 0.5em; float: right">
+			HTTP: Server-wide NGINX cache<br />
+			Filter: Only caching AMFs
+		</p>
+    </section>
+	
+    <section id="probabilities" class="slide" inlist="" rel="schema:hasPart" resource="#probabilities">
+        <h2 property="schema:name">3. No clear winner among the different false-positive probabilities</h2>
+		<img src="img/probabilities/plot_no_c.svg" height="200px">
+		<img src="img/probabilities/plot_c.svg" height="200px">
+		<br />
+		<br />
+		<strong>Optimal probability depends on dataset</strong>
+		<br />
+		<strong>WatDiv: 1/64</strong>
     </section>
 	
     <section id="index-findings" class="slide index" inlist="" rel="schema:hasPart" resource="#index-findings">
@@ -148,8 +288,46 @@
     </section>
 	
     <section id="findings" class="slide" inlist="" rel="schema:hasPart" resource="#findings">
-      <h2 property="schema:name" class="big">Findings</h2>
-	  TODO
+        <h2 property="schema:name">Findings</h2>
+		<ul>
+			<li>
+				<h3>Using AMFs higher up in the query plan improves query efficiency</h3>
+				<span class="indent">But can slow down time to first result</span>
+			</li>
+			<li>
+				<h3>Caching of AMFs is essential</h3>
+				<span class="indent">Pre-computation is also possible</span>
+			</li>
+			<li>
+				<h3>Bloom filters are more effective than Golomb-coded sets</h3>
+				<span class="indent">Bloom filters are easier to decompress for clients</span>
+			</li>
+			<li>
+				<h3>False-positive rate is dataset-dependent</h3>
+				<span class="indent">1/64 leads to a good trade-off for WatDiv</span>
+			</li>
+		</ul>
+    </section>
+	
+    <section id="reproducibility" class="slide" inlist="" rel="schema:hasPart" resource="#reproducibility">
+        <h2 property="schema:name">Experiments are fully reproducible</h2>
+		<ul>
+			<li>
+				<h3>Implementations are open-source</h3>
+				<p class="indent">Linked Data Fragments Server extension
+					<br />
+					<a href="https://github.com/LinkedDataFragments/Server.js/tree/feature-handlers-amf-2">https://github.com/LinkedDataFragments/Server.js/tree/feature-handlers-amf-2</a></p>
+				<p class="indent">Comunica client-side querying modules
+					<br />
+					<a href="https://github.com/comunica/comunica-feature-amf">https://github.com/comunica/comunica-feature-amf</a></p>
+			</li>
+			<li>
+				<h3>Reproducible Docker-based experiments</h3>
+				<p class="indent">Using declarative configuration files</a>
+					<br />
+					<a href="https://github.com/comunica/Experiments-AMF">https://github.com/comunica/Experiments-AMF</a></p>
+			</li>
+		</ul>
     </section>
 
     <footer>
