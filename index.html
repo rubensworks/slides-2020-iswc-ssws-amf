@@ -288,8 +288,46 @@ AMF(dbp:Dustin_Gee)
     </section>
 	
     <section id="findings" class="slide" inlist="" rel="schema:hasPart" resource="#findings">
-      <h2 property="schema:name" class="big">Findings</h2>
-	  TODO
+        <h2 property="schema:name">Findings</h2>
+		<ul>
+			<li>
+				<h3>Using AMFs higher up in the query plan improves query efficiency</h3>
+				<span class="indent">But can slow down time to first result</span>
+			</li>
+			<li>
+				<h3>Caching of AMFs is essential</h3>
+				<span class="indent">Pre-computation is also possible</span>
+			</li>
+			<li>
+				<h3>Bloom filters are more effective than Golomb-coded sets</h3>
+				<span class="indent">Bloom filters are easier to decompress for clients</span>
+			</li>
+			<li>
+				<h3>False-positive rate is dataset-dependent</h3>
+				<span class="indent">1/64 leads to a good trade-off for WatDiv</span>
+			</li>
+		</ul>
+    </section>
+	
+    <section id="reproducibility" class="slide" inlist="" rel="schema:hasPart" resource="#reproducibility">
+        <h2 property="schema:name">Experiments are fully reproducible</h2>
+		<ul>
+			<li>
+				<h3>Implementations are open-source</h3>
+				<p class="indent">Linked Data Fragments Server extension
+					<br />
+					<a href="https://github.com/LinkedDataFragments/Server.js/tree/feature-handlers-amf-2">https://github.com/LinkedDataFragments/Server.js/tree/feature-handlers-amf-2</a></p>
+				<p class="indent">Comunica client-side querying modules
+					<br />
+					<a href="https://github.com/comunica/comunica-feature-amf">https://github.com/comunica/comunica-feature-amf</a></p>
+			</li>
+			<li>
+				<h3>Reproducible Docker-based experiments</h3>
+				<p class="indent">Using declarative configuration files</a>
+					<br />
+					<a href="https://github.com/comunica/Experiments-AMF">https://github.com/comunica/Experiments-AMF</a></p>
+			</li>
+		</ul>
     </section>
 
     <footer>
