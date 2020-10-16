@@ -208,12 +208,75 @@ AMF(dbp:Dustin_Gee)
       </ul>
     </section>
 	
+    <section id="optimizations" class="slide" inlist="" rel="schema:hasPart" resource="#optimizations">
+        <h2 property="schema:name">Investigated directions for optimization</h2>
+		<p style="font-style: italic">Subselection, more in the article</p>
+		<ul>
+			<li>
+				<h3>1. Use AMFs higher up in the query plan</h3>
+				<span class="indent">Also use for partially bound triple patterns</span>
+			</li>
+			<li>
+				<h3>2. Caching of AMFs</h3>
+				<span class="indent">To avoid regenerating large AMFs</span>
+			</li>
+			<li>
+				<h3>4. Determine the optimal false-positive probability</h3>
+				<span class="indent">Probability impacts number of HTTP requests and AMF sizes</span>
+			</li>
+		</ul>
+    </section>
+	
     <section id="index-experiments" class="slide index" inlist="" rel="schema:hasPart" resource="#index-experiments">
       <ul>
         <li><a href="#index-optimizations">Optimizations</a></li>
         <li class="current"><a href="#index-experiments">Experiments</a></li>
         <li><a href="#index-findings">Findings</a></li>
       </ul>
+    </section>
+	
+    <section id="client-algo" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo">
+        <h2 property="schema:name">1. Using AMFs higher up in query plan reduces time for most queries</h2>
+		<img src="img/client_algos/plot_no_c.svg" height="200px">
+		<img src="img/client_algos/plot_c.svg" height="200px">
+		<p style="font-size: 0.5em; float: right">
+			None: Default client-side TPF algorithm<br />
+			Triple: Existing triple-level AMF algoritm<br />
+			BGPSimple, BGPCombined, TripleBGP: New higher-level algorithms
+		</p>
+		<strong>Speedup for 15 / 20 queries</strong>
+		<p style="font-style: italic"><strong>WatDiv</strong> (dataset scale: 100; query count: 5)</p>
+    </section>
+	
+    <section id="client-algo-dief" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo-dief">
+        <h2 property="schema:name">1. Using AMFs higher up in query plan changes result arrival times</h2>
+		<center><img src="img/client_algos/query_times_F3.svg" height="200px"></center>
+		<strong>Delayed time to first result</strong>
+		<br />
+		<span class="indent">AMFs used for higher-level algorithms are larger &rarr; more HTTP delay</span>
+		<br />
+		<strong>Faster result rate</strong>
+    </section>
+	
+    <section id="caching" class="slide" inlist="" rel="schema:hasPart" resource="#caching">
+        <h2 property="schema:name">2. Any form of caching significantly reduces query execution time</h2>
+		<img src="img/caching/plot_no_c.svg" height="180px" style="margin-top: 4em">
+		<img src="img/caching/plot_c.svg" height="180px">
+		<p style="font-size: 0.5em; float: right">
+			HTTP: Server-wide NGINX cache<br />
+			Filter: Only caching AMFs
+		</p>
+    </section>
+	
+    <section id="probabilities" class="slide" inlist="" rel="schema:hasPart" resource="#probabilities">
+        <h2 property="schema:name">3. No clear winner among the different false-positive probabilities</h2>
+		<img src="img/probabilities/plot_no_c.svg" height="200px">
+		<img src="img/probabilities/plot_c.svg" height="200px">
+		<br />
+		<br />
+		<strong>Optimal probability depends on dataset</strong>
+		<br />
+		<strong>WatDiv: 1/64</strong>
     </section>
 	
     <section id="index-findings" class="slide index" inlist="" rel="schema:hasPart" resource="#index-findings">
