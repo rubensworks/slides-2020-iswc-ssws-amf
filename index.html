@@ -125,6 +125,22 @@ dbp:Dustin_Gee             a dbo:Artist
 		<h3 class="next">&rarr; 207 HTTP membership requests</h3>
     </section>
 	
+    <section id="index" class="slide index" inlist="" rel="schema:hasPart" resource="#index">
+      <ul>
+        <li><a href="#index-existing">Existing Optimization</a></li>
+        <li><a href="#index-new">New Optimizations</a></li>
+        <li><a href="#index-findings">Findings</a></li>
+      </ul>
+    </section>
+	
+    <section id="index-existing" class="slide index" inlist="" rel="schema:hasPart" resource="#index-existing">
+      <ul>
+        <li class="current"><a href="#index-existing">Existing Optimization</a></li>
+        <li><a href="#index-new">New Optimizations</a></li>
+        <li><a href="#index-findings">Findings</a></li>
+      </ul>
+    </section>
+	
     <section id="vandersande-solution" class="slide" inlist="" rel="schema:hasPart" resource="#vandersande-solution">
         <h2 property="schema:name">Approximate membership filters (AMFs) to reduce HTTP requests</h2>
 		
@@ -164,7 +180,7 @@ AMF(dbp:Charles_Francis_Hansom)
 AMF(dbp:Dustin_Gee)
 ...</pre>
 		</span>
-		<h3 class="next"><strike>&rarr; 207 HTTP membership requests</strike></h3>
+		<h3 class="next">&rarr; <strike>207</strike> 32 HTTP membership requests</h3>
     </section>
 	
     <section id="vandersande-findings" class="slide" inlist="" rel="schema:hasPart" resource="#vandersande-findings">
@@ -192,18 +208,10 @@ AMF(dbp:Dustin_Gee)
 		</center>
     </section>
 	
-    <section id="index" class="slide index" inlist="" rel="schema:hasPart" resource="#index">
+    <section id="index-new" class="slide index" inlist="" rel="schema:hasPart" resource="#index-new">
       <ul>
-        <li><a href="#index-optimizations">Optimizations</a></li>
-        <li><a href="#index-experiments">Experiments</a></li>
-        <li><a href="#index-findings">Findings</a></li>
-      </ul>
-    </section>
-	
-    <section id="index-optimizations" class="slide index" inlist="" rel="schema:hasPart" resource="#index-optimizations">
-      <ul>
-        <li class="current"><a href="#index-optimizations">Optimizations</a></li>
-        <li><a href="#index-experiments">Experiments</a></li>
+        <li><a href="#index-existing">Existing Optimization</a></li>
+        <li class="current"><a href="#index-new">New Optimizations</a></li>
         <li><a href="#index-findings">Findings</a></li>
       </ul>
     </section>
@@ -221,18 +229,10 @@ AMF(dbp:Dustin_Gee)
 				<span class="indent">To avoid regenerating large AMFs</span>
 			</li>
 			<li>
-				<h3>4. Determine the optimal false-positive probability</h3>
+				<h3>3. Determine the optimal false-positive probability</h3>
 				<span class="indent">Probability impacts number of HTTP requests and AMF sizes</span>
 			</li>
 		</ul>
-    </section>
-	
-    <section id="index-experiments" class="slide index" inlist="" rel="schema:hasPart" resource="#index-experiments">
-      <ul>
-        <li><a href="#index-optimizations">Optimizations</a></li>
-        <li class="current"><a href="#index-experiments">Experiments</a></li>
-        <li><a href="#index-findings">Findings</a></li>
-      </ul>
     </section>
 	
     <section id="client-algo" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo">
@@ -250,7 +250,7 @@ AMF(dbp:Dustin_Gee)
 	
     <section id="client-algo-dief" class="slide" inlist="" rel="schema:hasPart" resource="#client-algo-dief">
         <h2 property="schema:name">1. Using AMFs higher up in query plan changes result arrival times</h2>
-		<center><img src="img/client_algos/query_times_F3.svg" height="200px"></center>
+		<center><img src="img/client_algos/query_times_F3.svg" height="250px"></center>
 		<strong>Delayed time to first result</strong>
 		<br />
 		<span class="indent">AMFs used for higher-level algorithms are larger &rarr; more HTTP delay</span>
@@ -281,8 +281,8 @@ AMF(dbp:Dustin_Gee)
 	
     <section id="index-findings" class="slide index" inlist="" rel="schema:hasPart" resource="#index-findings">
       <ul>
-        <li><a href="#index-optimizations">Optimizations</a></li>
-        <li><a href="#index-experiments">Experiments</a></li>
+        <li><a href="#index-existing">Existing Optimization</a></li>
+        <li><a href="#index-new">New Optimizations</a></li>
         <li class="current"><a href="#index-findings">Findings</a></li>
       </ul>
     </section>
